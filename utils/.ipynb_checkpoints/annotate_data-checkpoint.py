@@ -6,7 +6,9 @@ import copy
 import json
 
 
-parser = argparse.ArgumentParser(description="This script is used for annotating data and saving them as coco style annotations")
+parser = argparse.ArgumentParser(
+    description="This script is used for annotating data and saving them as coco style annotations"
+)
 
 parser.add_argument(
     "--input_path",
