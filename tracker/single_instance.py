@@ -34,7 +34,7 @@ class SingleInstanceTracker:
         )
 
         self.filter.P *= 0.5  # initial uncertainty
-
+        
         z_std = 0.1
 
         self.filter.R = np.diag([z_std ** 2, z_std ** 2])  # measurment noise matrix
