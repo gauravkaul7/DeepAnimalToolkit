@@ -47,7 +47,6 @@ class DetectorTrainer:
         print("Loaded "+str(len(dataset_dicts))+" training datapoints")
         return dataset_dicts
 
-    
     def load_dataset(self, annotations_folder: str):
         print('looking in',annotations_folder,'for annotations')
         DatasetCatalog.register("train_dataset", lambda p=annotations_folder: self.get_dataset_dicts(p))
@@ -55,12 +54,12 @@ class DetectorTrainer:
         mouse_metadata = MetadataCatalog.get("train_dataset")
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
 
-    def train_detector(self,model_name):
+    def train_detector(self):
         os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
         self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.SOLVER.MAX_ITER = 250
+        self.cfg.SOLVER.MAX_ITER = 100
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  
         self.trainer = DefaultTrainer(self.cfg) 
         self.trainer.resume_or_load(resume=False)
