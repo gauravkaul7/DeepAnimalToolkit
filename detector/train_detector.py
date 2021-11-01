@@ -29,10 +29,10 @@ pretrained_weights = {
 
 class DetectorTrainer:
     def __init__(self,model_type:str):
-        print("import done, class initiated")
         self.cfg = get_cfg()
         self.cfg.merge_from_file(model_zoo.get_config_file(pretrained_weights[model_type]))
-
+        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(pretrained_weights[model_type]) 
+        print('starting model weights coming from:',pretrained_weights[model_type])
 
     def get_dataset_dicts(self,annotations_path : str):
         dataset_dicts = [json.load(open(annotations_path+x)) for x in os.listdir(annotations_path) if x[-5:]=='.json']
@@ -55,12 +55,13 @@ class DetectorTrainer:
         mouse_metadata = MetadataCatalog.get("train_dataset")
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
 
-    def train_detector(self):
+    def train_detector(self,model_name):
+        os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
         self.cfg.SOLVER.IMS_PER_BATCH = 8
         self.cfg.SOLVER.MAX_ITER = 250
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  
-        self.trainer = DefaultTrainer(cfg) 
+        self.trainer = DefaultTrainer(self.cfg) 
         self.trainer.resume_or_load(resume=False)
         self.trainer.train()
