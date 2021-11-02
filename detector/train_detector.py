@@ -46,7 +46,7 @@ class DetectorTrainer:
             if x[-5:] == ".json"
         ]
         for datapoint in dataset_dicts:
-            datapoint["file_name"] = annotations_path + datapoint["file_name"]
+            datapoint["file_name"] = datapoint["file_name"]
             for ann in datapoint["annotations"]:
                 ann["bbox_mode"] = BoxMode.XYXY_ABS
                 ann["segmentation"] = [ann["segmentation"]]
