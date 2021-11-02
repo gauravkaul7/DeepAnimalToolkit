@@ -53,9 +53,7 @@ class DetectorTrainer:
                 ann["category_id"] = 0
         print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
         print("filterig dataset ...")
-        self.dataset_dicts = [
-            x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6
-        ]
+        dataset_dicts = [x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6]
         print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
         return dataset_dicts
 
