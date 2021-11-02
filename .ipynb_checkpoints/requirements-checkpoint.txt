@@ -1,5 +1,2 @@
 numpy>=1.17
-torch==1.8.0
--f https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.8/index.html 
-detectron2
 filterpy
