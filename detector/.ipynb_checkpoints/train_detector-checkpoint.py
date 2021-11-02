@@ -27,29 +27,43 @@ pretrained_weights = {
     "detector_101": "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml",
 }
 
-class DetectorTrainer:
-    def __init__(self,model_type:str):
-        self.cfg = get_cfg()
-        self.cfg.merge_from_file(model_zoo.get_config_file(pretrained_weights[model_type]))
-        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(pretrained_weights[model_type]) 
-        print('starting model weights coming from:',pretrained_weights[model_type])
 
-    def get_dataset_dicts(self,annotations_path : str):
-        dataset_dicts = [json.load(open(annotations_path+x)) for x in os.listdir(annotations_path) if x[-5:]=='.json']
+class DetectorTrainer:
+    def __init__(self, model_type: str):
+        self.cfg = get_cfg()
+        self.cfg.merge_from_file(
+            model_zoo.get_config_file(pretrained_weights[model_type])
+        )
+        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
+            pretrained_weights[model_type]
+        )
+        print("starting model weights coming from:", pretrained_weights[model_type])
+
+    def get_dataset_dicts(self, annotations_path: str):
+        dataset_dicts = [
+            json.load(open(annotations_path + x))
+            for x in os.listdir(annotations_path)
+            if x[-5:] == ".json"
+        ]
         for datapoint in dataset_dicts:
-            datapoint['file_name'] = annotations_path+datapoint['file_name'] 
+            datapoint["file_name"] = annotations_path + datapoint["file_name"]
             for ann in datapoint["annotations"]:
                 ann["bbox_mode"] = BoxMode.XYXY_ABS
                 ann["segmentation"] = [ann["segmentation"]]
-                print(ann["segmentation"])
                 ann["category_id"] = 0
-        self.dataset_dicts = [x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >=6]
-        print("Loaded "+str(len(dataset_dicts))+" training datapoints")
+        print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
+        print("filterig dataset ...")
+        self.dataset_dicts = [
+            x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6
+        ]
+        print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
         return dataset_dicts
 
     def load_dataset(self, annotations_folder: str):
-        print('looking in',annotations_folder,'for annotations')
-        DatasetCatalog.register("train_dataset", lambda p=annotations_folder: self.get_dataset_dicts(p))
+        print("looking in", annotations_folder, "for annotations")
+        DatasetCatalog.register(
+            "train_dataset", lambda p=annotations_folder: self.get_dataset_dicts(p)
+        )
         MetadataCatalog.get("train_dataset").set(thing_classes=["mouse"])
         mouse_metadata = MetadataCatalog.get("train_dataset")
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
@@ -60,7 +74,8 @@ class DetectorTrainer:
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
         self.cfg.SOLVER.IMS_PER_BATCH = 8
         self.cfg.SOLVER.MAX_ITER = 100
-        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  
-        self.trainer = DefaultTrainer(self.cfg) 
+        self.cfg.DATALOADER.NUM_WORKERS = 2
+        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
+        self.trainer = DefaultTrainer(self.cfg)
         self.trainer.resume_or_load(resume=False)
         self.trainer.train()

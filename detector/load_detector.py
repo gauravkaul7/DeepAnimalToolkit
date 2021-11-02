@@ -19,33 +19,32 @@ pretrained_weights = {
     "detector_101": "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml",
 }
 
+
 class Detector:
     """
     this class trains a faster rcnn with selected branches(keypoint,mask,etc.)
     branch: either "mask", "keypoint", or "none"
     """
 
-    def __init__(self, model_type : str):
+    def __init__(self, model_type: str):
         self.cfg = get_cfg()
         self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
         self.cfg.merge_from_file(
-            model_zoo.get_config_file(
-               pretrained_weights[model_type]
-            )
+            model_zoo.get_config_file(pretrained_weights[model_type])
         )
-        
-    def load_trained_model(self, weights_path : str):
+
+    def load_trained_model(self, weights_path: str):
         self.cfg.MODEL.WEIGHTS = weights_path
         print("loaded model from:", weights_path)
         self.detection_model = DefaultPredictor(self.cfg)
         self.detection_model.eval()
-        
+
     def get_detections_video(video_path):
-        
+
         cap = cv2.VideoCapture(video_path)
         detections = []
-        
+
         for f in tqdm(range(int(total_frames - 1))):
             ret, frame = cap.read()
 
