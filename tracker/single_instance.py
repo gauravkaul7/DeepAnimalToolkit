@@ -11,54 +11,47 @@ class SingleInstanceTracker:
     and/or keypoints.
     """
 
-    def __init__(self, num_measurments: 2):
-
-        # hx() measurement function - convert state into a measurement
-        # where measurements are [x_pos, y_pos]
-        def hx(x):
-            return np.array([x[0], x[2]])
-
-        # fx() state transition function - predict next state based
-        # on constant velocity model x = vt + x_0
-        def fx(x, dt):
-            F = np.array(
-                [[1, dt, 0, 0], [0, 1, 0, 0], [0, 0, 1, dt], [0, 0, 0, 1]], dtype=float
-            )
-            return np.dot(F, x)
-
-        ## Generates sigma points and weights
-        points = MerweScaledSigmaPoints(4, alpha=0.1, beta=2.0, kappa=-1)
-
-        self.filter = UnscentedKalmanFilter(
-            dim_x=4, dim_z=2, dt=dt, fx=fx, hx=hx, points=points
-        )
-
-        self.filter.P *= 0.5  # initial uncertainty
+    def __init__(self):
+        print('tracker initilized')
         
-        z_std = 0.1
+        self.dt = 0.1
+        
+        # create sigma points to use in the filter. This is standard for Gaussian processes
+        self.points = MerweScaledSigmaPoints(4, alpha=.1, beta=2., kappa=-1)
+        
+        self.kf = filterpy.kalman.UnscentedKalmanFilter(dim_x=4, 
+                                                        dim_z=2, 
+                                                        dt=self.dt, 
+                                                        fx=self.fx, 
+                                                        hx=self.hx, 
+                                                        points=self.points)
+        
+        self.kf.x = np.array([-1., 1., -1., 1]) # initial state
+        self.kf.P *=  0.1 # initial uncertainty
+        self.z_std = 0.1
+        self.kf.R = np.diag([z_std**2, z_std**2]) # 1 standard
+        self.kf.Q =  filterpy.common.Q_discrete_white_noise(dim=2, dt=dt, var=0.01**2, block_size=2)
 
-        self.filter.R = np.diag([z_std ** 2, z_std ** 2])  # measurment noise matrix
 
-        self.filter.Q = filterpy.common.Q_discrete_white_noise(
-            dim=2, dt=dt, var=0.01 ** 2, block_size=2
-        )  # process noise matrix
+    def track_object_offline(self, trajectory):
+        trajectory_filtered = []
+        for z in trajectory:
+            self.kf.predict()
+            self.kf.update(z)
+            #print(hx(kf.x), 'log-likelihood', kf.log_likelihood)
+            trajectory_filtered.append(self.hx(self.kf.x))
+        return trajectory_filtered
+    
+    def fx(self, x, dt):
+      # state transition function - predict next state based
+      # on constant velocity model x = vt + x_0
+        F = np.array([[1, dt, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, dt],
+                    [0, 0, 0, 1]], dtype=float)
+        
+        return np.dot(F, x)
 
-    def set_initial_state(self, state_array):
-        ##state_array : a numpy array of dim_x representing initial state
-        self.filter.x = state_array
-        self.filter.predict()
+    def hx(self, x):  
+        return np.array([x[0], x[2]])
 
-    def update_state(self, state_array):
-        ##state_array : a numpy array of dim_z representing initial state
-        self.filter.update(state_array)
-
-    def track_object_offline(self, measurments):
-        """
-        measurments: a numpy array of shape (n_measurments, 1 + dim_z)
-
-        This runs offline tracking on a set of measurments
-        the required input is an array called mesaurments
-        of shape (n_measurments, 1 + dim_z) i+dimz is a booleen
-        representation a detection and dim_z is the detection
-        """
-        return

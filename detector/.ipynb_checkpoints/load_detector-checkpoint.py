@@ -36,11 +36,10 @@ class Detector:
         )
         
     def load_trained_model(self, weights_path : str):
-        #self.cfg.MODEL.WEIGHTS = weights_path
+        self.cfg.MODEL.WEIGHTS = weights_path
         print("loaded model from:", weights_path)
-        #self.detection_model = DefaultPredictor(self.cfg)
-        #self.detection_model.eval()
-
+        self.detection_model = DefaultPredictor(self.cfg)
+        self.detection_model.eval()
         
     def get_detections_video(video_path):
         
