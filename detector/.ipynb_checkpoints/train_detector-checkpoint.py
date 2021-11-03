@@ -64,17 +64,16 @@ class DetectorTrainer:
         )
         MetadataCatalog.get("train_dataset").set(thing_classes=["mouse"])
         mouse_metadata = MetadataCatalog.get("train_dataset")
-        self.cfg.DATASETS.TRAIN = ("train_dataset",)
 
     def train_detector(self):
         os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
-        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
-        self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512    
-        self.cfg.SOLVER.MAX_ITER = 1000
+        self.cfg.DATASETS.TEST = ()
         self.cfg.DATALOADER.NUM_WORKERS = 2
-        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
-        self.cfg.SOLVER.BASE_LR = 1e-1 
-        self.trainer = DefaultTrainer(self.cfg)
+        self.cfg.SOLVER.IMS_PER_BATCH = 8
+        self.cfg.SOLVER.MAX_ITER = 250
+        self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   # faster, and good enough for this toy dataset (default: 512)
+        self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
+        self.trainer = DefaultTrainer(self.cfg) 
+        self.trainer.resume_or_load(resume=False)
         self.trainer.train()
