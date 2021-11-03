@@ -71,7 +71,8 @@ class DetectorTrainer:
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
         self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.SOLVER.MAX_ITER = 250
+        self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512    
+        self.cfg.SOLVER.MAX_ITER = 1000
         self.cfg.DATALOADER.NUM_WORKERS = 2
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
         self.cfg.SOLVER.BASE_LR = 1e-1 
