@@ -28,17 +28,18 @@ class Detector:
 
     def __init__(self, model_type: str):
         self.cfg = get_cfg()
-        self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
-        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
         self.cfg.merge_from_file(
             model_zoo.get_config_file(pretrained_weights[model_type])
         )
+        self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
+        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.9
+        
 
     def load_trained_model(self, weights_path: str):
         self.cfg.MODEL.WEIGHTS = weights_path
-        print("loaded model from:", weights_path)
         self.detection_model = DefaultPredictor(self.cfg)
-        self.detection_model.eval()
+        print("loaded model from:", weights_path)
+
 
     def get_detections_video(video_path):
 
@@ -57,3 +58,4 @@ class Detector:
                 detections.append(
                     [1] + outputs["instances"].to("cpu").pred_boxes.tensor.tolist()
                 )
+        return detections
