@@ -4,7 +4,6 @@ import cv2
 
 
 def scale_bbox(bboxes,image_paths):
-    
     scaled_bboxes = bboxes
     return scaled_bboxes
 
@@ -13,20 +12,10 @@ def build_annotations(scaled_bboxes,image_paths):
     return 
 
 def setup_gui():
-    os.system("git clone --depth 1 https://github.com/tensorflow/models")
     
-    sh = '''
+    os.system("pip install git+git://github.com/ricardodeazambuja/colab_utils.gits")
     
-    cd models/research/
-    protoc object_detection/protos/*.proto --python_out=.
-    cp object_detection/packages/tf2/setup.py .
-    python -m pip install -q .
-    
-    '''
-    
-    with open('script.sh', 'w') as file:
-        file.write(sh)
-    os.system("bash script.sh")
+    print("big shoutout to ricardodeazambuja for making such a wonderful tool!")
     
     print("in colab GUI setup!")
     
