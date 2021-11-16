@@ -1,4 +1,5 @@
 import os 
+from tqdm import tqdm
 
 '''import torch
 TORCH_VERSION = ".".join(torch.__version__.split(".")[:2])
@@ -11,10 +12,14 @@ def setup_DeepAnimalToolkit():
     dependencies = ['pip install -r DeepAnimalToolkit/requirements.txt',
                     'pip install pyyaml==5.1',
                     'pip install torch==1.8.0+cu101 torchvision==0.9.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html',
-                    'pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.8/index.html']
+                    'pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.8/index.html',
+                    'pip install git+git://github.com/ricardodeazambuja/colab_utils.git']
     
-    for d in dependencies: 
+    for d in tqdm(dependencies): 
         os.system(d)
+
+        
+        
         
 def setup_demo():
     dependencies = ['wget https://www.dropbox.com/s/04cxtviaercx2y1/single_mouse_dataset.zip', 

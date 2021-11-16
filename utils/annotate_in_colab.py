@@ -19,9 +19,9 @@ def setup_gui():
     
     print("in colab GUI setup!")
     
-    return 0
+    return 
 
-def sample_frames(video_path):
+def sample_frames(video_path,total_num_frames):
     output_path = 'images/'
     os.system('mkdir ' + output_path)
     
@@ -34,7 +34,7 @@ def sample_frames(video_path):
     for path in video_paths:
         cap = cv2.VideoCapture(path)
         num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        for i in range(args.num_samples):
+        for i in range(total_num_frames):
             frame_no = random.randint(1, num_frames - 1)
             cap = cv2.VideoCapture(path)
             cap.set(1, frame_no)
