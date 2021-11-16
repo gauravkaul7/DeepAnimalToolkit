@@ -14,7 +14,7 @@ def setup_DeepAnimalToolkit():
                     'pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.8/index.html']
     
     for d in dependencies: 
-        os.system(dependencies)
+        os.system(d)
         
 def setup_demo():
     dependencies = ['wget https://www.dropbox.com/s/04cxtviaercx2y1/single_mouse_dataset.zip', 
@@ -22,5 +22,5 @@ def setup_demo():
                     'unzip single_mouse_dataset.zip']
     
     for d in dependencies: 
-        os.system(dependencies)
+        os.system(d)
     return 0 
