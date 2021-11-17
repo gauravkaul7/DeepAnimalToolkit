@@ -39,7 +39,7 @@ def build_dataset(image_paths, training_data, boxes):
         im_id+=1
         
         ann = copy.deepcopy(annotaion_template)
-        ann["bbox"] = [bbox[0],bbox[1],bbox[2],bbox[3]]
+        ann["bbox"] = [bbox[0][0],bbox[0][1],bbox[0][2],bbox[0][3]]
     
         datapoint["annotations"].append(ann)
         
