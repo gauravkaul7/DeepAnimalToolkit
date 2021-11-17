@@ -25,7 +25,7 @@ def scale_bbox(bboxes,image_paths):
 def build_dataset(image_paths, training_data, boxes):
     os.system("mkdir annotations")
     im_id = 0
-    for bbox,image,path in zip(boxes,training_data,sample_paths):
+    for bbox,image,path in zip(boxes,training_data,image_paths):
         #resize bounding box
         bbox[::2] *= image.shape[0]
         bbox[1::2] *= image.shape[1]
@@ -43,7 +43,7 @@ def build_dataset(image_paths, training_data, boxes):
     
         datapoint["annotations"].append(ann)
         
-        with open("annotations/" + str(im_id) + "_annotation.json", "w") as outfile:
+        with open("annotations/" + image_paths.split('/')[1][:-4] + "_annotation.json", "w") as outfile:
                 json.dump(datapoint, outfile)
 
         
