@@ -43,7 +43,7 @@ def build_dataset(image_paths, training_data, boxes):
     
         datapoint["annotations"].append(ann)
         
-        with open("annotations/" + image_paths.split('/')[1][:-4] + "_annotation.json", "w") as outfile:
+        with open("annotations/" + path.split('/')[1][:-4] + "_annotation.json", "w") as outfile:
                 json.dump(datapoint, outfile)
 
         
