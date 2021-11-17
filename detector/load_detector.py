@@ -41,12 +41,12 @@ class Detector:
         print("loaded model from:", weights_path)
 
 
-    def get_detections_video(video_path):
+    def get_detections_video(self,video_path,num_frames):
 
         cap = cv2.VideoCapture(video_path)
         detections = []
 
-        for f in tqdm(range(int(total_frames - 1))):
+        for f in tqdm(range(int(num_frames))):
             ret, frame = cap.read()
 
             with torch.no_grad():
