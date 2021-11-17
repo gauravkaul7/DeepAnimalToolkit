@@ -49,11 +49,11 @@ class DetectorTrainer:
             datapoint["file_name"] = datapoint["file_name"]
             for ann in datapoint["annotations"]:
                 ann["bbox_mode"] = BoxMode.XYXY_ABS
-                ann["segmentation"] = [ann["segmentation"]]
+                #ann["segmentation"] = [ann["segmentation"]]
                 ann["category_id"] = 0
         print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
-        print("filterig dataset ...")
-        dataset_dicts = [x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6]
+        print("filterig dataset  ...")
+        #dataset_dicts = [x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6]
         print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
         return dataset_dicts
 
@@ -71,7 +71,7 @@ class DetectorTrainer:
         self.cfg.DATASETS.TEST = ()
         self.cfg.DATALOADER.NUM_WORKERS = 2
         self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.SOLVER.MAX_ITER = 250
+        self.cfg.SOLVER.MAX_ITER = 100
         self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   # faster, and good enough for this toy dataset (default: 512)
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
         self.trainer = DefaultTrainer(self.cfg) 
