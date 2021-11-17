@@ -30,6 +30,14 @@ from PIL import Image
 from google.colab import output
 from google.colab.output import eval_js
 
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+from six import BytesIO
+from pathlib import Path
+import tensorflow as tf
+
 
 def image_from_numpy(image):
   """Open an image at the specified path and encode it in Base64.
@@ -478,3 +486,10 @@ def annotate(imgs: List[Union[str, np.ndarray]],  # pylint: disable=invalid-name
 
   output.register_callback(callbackId, callbackFunction)
   draw_bbox(imgs, callbackId)
+
+def load_image_into_numpy_array(path):
+    img_data = tf.io.gfile.GFile(path, 'rb').read()
+    image = Image.open(BytesIO(img_data))
+    (im_width, im_height) = image.size
+    image_np = np.array(image.getdata(), dtype=np.uint8)
+    return image_np.reshape((im_height, im_width, 3))
