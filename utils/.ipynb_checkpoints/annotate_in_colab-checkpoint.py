@@ -4,11 +4,49 @@ import cv2
 import random
 import copy
 
+datapoint_template = {
+    "file_name": "",
+    "height": 0,
+    "width": 0,
+    "image_id": 0,
+    "annotations": [],
+}
+annotaion_template = {
+    "bbox": [],
+    "bbox_mode": "BoxMode.XYXY_ABS",
+    "category_id": 0
+}
+
+
 def scale_bbox(bboxes,image_paths):
     scaled_bboxes = bboxes
     return scaled_bboxes
 
-def build_annotations(scaled_bboxes,image_paths):
+def build_dataset(image_paths, training_data, boxes):
+    os.system("mkdir annotations")
+    im_id = 0
+    for bbox,image,path in zip(boxes,training_data,sample_paths):
+        #resize bounding box
+        bbox[::2] *= image.shape[0]
+        bbox[1::2] *= image.shape[1]
+        
+        #create datapoint
+        datapoint = copy.deepcopy(datapoint_template)
+        datapoint["file_name"] = path 
+        datapoint["height"] = path 
+        datapoint["width"] = path 
+        datapoint["image_id"] = im_id 
+        im_id+=1
+        
+        ann = copy.deepcopy(annotaion_template)
+        ann["bbox"] = [bbox[0],bbox[1],bbox[2],bbox[3]]
+    
+        datapoint["annotations"].append(ann)
+        
+        with open("annotations/" + str(im_id) + "_annotation.json", "w") as outfile:
+                json.dump(datapoint, outfile)
+
+        
     print("output annotations folder:")
     return 
 

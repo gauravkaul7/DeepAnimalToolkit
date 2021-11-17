@@ -171,9 +171,7 @@ for img_path in images:
 
                 datapoint["annotations"].append(annotation)
 
-            with open(
-                args.output_path + window_name.split(".")[0] + "_annotation.json", "w"
-            ) as outfile:
+            with open(args.output_path + window_name.split(".")[0] + "_annotation.json", "w") as outfile:
                 json.dump(datapoint, outfile)
                 print(args.output_path + window_name.split(".")[0] + "_annotation.json")
             break
