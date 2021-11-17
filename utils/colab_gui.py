@@ -1,3 +1,19 @@
+# Lint as: python3
+# Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
+"""Utils for colab tutorials located in object_detection/colab_tutorials/..."""
 import base64
 import io
 import json
@@ -16,15 +32,38 @@ from google.colab.output import eval_js
 
 
 def image_from_numpy(image):
-    with io.BytesIO() as img_output:
-        Image.fromarray(image).save(img_output, format='JPEG')
-        data = img_output.getvalue()
-        data = str(base64.b64encode(data))[2:-1]
-    return data
+  """Open an image at the specified path and encode it in Base64.
+
+  Args:
+    image: np.ndarray
+      Image represented as a numpy array
+
+  Returns:
+    An encoded Base64 representation of the image
+  """
+
+  with io.BytesIO() as img_output:
+    Image.fromarray(image).save(img_output, format='JPEG')
+    data = img_output.getvalue()
+  data = str(base64.b64encode(data))[2:-1]
+  return data
 
 
 def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
-    js = Javascript('''
+  """Open the bounding box UI and send the results to a callback function.
+
+  Args:
+    image_urls: list[str | np.ndarray]
+      List of locations from where to load the images from. If a np.ndarray is
+      given, the array is interpretted as an image and sent to the frontend.
+      If a str is given, the string is interpreted as a path and is read as a
+      np.ndarray before being sent to the frontend.
+
+    callbackId: str
+      The ID for the callback function to send the bounding box results to
+      when the user hits submit.
+  """
+  js = Javascript('''
               async function load_image(imgs, callbackId) {
                   //init organizational elements
                   const div = document.createElement('div');
@@ -325,34 +364,99 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
             }''')
 
   # load the images as a byte array
-    bytearrays = []
-    for image in image_urls:
-        if isinstance(image, np.ndarray):
-            bytearrays.append(image_from_numpy(image))
-        else:
-            raise TypeError('Image has unsupported type {}.'.format(type(image)))
+  bytearrays = []
+  for image in image_urls:
+    if isinstance(image, np.ndarray):
+      bytearrays.append(image_from_numpy(image))
+    else:
+      raise TypeError('Image has unsupported type {}.'.format(type(image)))
 
-    # format arrays for input
-    image_data = json.dumps(bytearrays)
-    del bytearrays
+  # format arrays for input
+  image_data = json.dumps(bytearrays)
+  del bytearrays
 
-    # call java script function pass string byte array(image_data) as input
-    display(js)
-    eval_js('load_image({}, \'{}\')'.format(image_data, callbackId))
-    return
+  # call java script function pass string byte array(image_data) as input
+  display(js)
+  eval_js('load_image({}, \'{}\')'.format(image_data, callbackId))
+  return
 
 
-def annotate(imgs: List[Union[str, np.ndarray]],  
+def annotate(imgs: List[Union[str, np.ndarray]],  # pylint: disable=invalid-name
              box_storage_pointer: List[np.ndarray],
              callbackId: str = None):
-    if callbackId is None:
-        callbackId = str(uuid.uuid1()).replace('-', '')
+  """Open the bounding box UI and prompt the user for input.
 
-def dictToList(input_bbox):  # pylint: disable=invalid-name
+  Args:
+    imgs: list[str | np.ndarray]
+      List of locations from where to load the images from. If a np.ndarray is
+      given, the array is interpretted as an image and sent to the frontend. If
+      a str is given, the string is interpreted as a path and is read as a
+      np.ndarray before being sent to the frontend.
+
+    box_storage_pointer: list[np.ndarray]
+      Destination list for bounding box arrays. Each array in this list
+      corresponds to one of the images given in imgs. The array is a
+      N x 4 array where N is the number of bounding boxes given by the user
+      for that particular image. If there are no bounding boxes for an image,
+      None is used instead of an empty array.
+
+    callbackId: str, optional
+      The ID for the callback function that communicates between the fontend
+      and the backend. If no ID is given, a random UUID string is used instead.
+  """
+
+  # Set a random ID for the callback function
+  if callbackId is None:
+    callbackId = str(uuid.uuid1()).replace('-', '')
+
+  def dictToList(input_bbox):  # pylint: disable=invalid-name
+    """Convert bbox.
+
+    This function converts the dictionary from the frontend (if the format
+    {x, y, w, h} as shown in callbackFunction) into a list
+    ([y_min, x_min, y_max, x_max])
+
+    Args:
+      input_bbox:
+
+    Returns:
+      A list with bbox coordinates in the form [ymin, xmin, ymax, xmax].
+    """
     return (input_bbox['y'], input_bbox['x'], input_bbox['y'] + input_bbox['h'],
             input_bbox['x'] + input_bbox['w'])
 
-def callbackFunction(annotations: List[List[Dict[str, float]]]):  # pylint: disable=invalid-name
+  def callbackFunction(annotations: List[List[Dict[str, float]]]):  # pylint: disable=invalid-name
+    """Callback function.
+
+    This is the call back function to capture the data from the frontend and
+    convert the data into a numpy array.
+
+    Args:
+      annotations: list[list[dict[str, float]]]
+        The input of the call back function is a list of list of objects
+        corresponding to the annotations. The format of annotations is shown
+        below
+
+        [
+          // stuff for image 1
+          [
+            // stuff for rect 1
+            {x, y, w, h},
+            // stuff for rect 2
+            {x, y, w, h},
+            ...
+          ],
+          // stuff for image 2
+          [
+            // stuff for rect 1
+            {x, y, w, h},
+            // stuff for rect 2
+            {x, y, w, h},
+            ...
+          ],
+          ...
+        ]
+    """
 
     # reset the boxes list
     nonlocal box_storage_pointer
@@ -361,15 +465,16 @@ def callbackFunction(annotations: List[List[Dict[str, float]]]):  # pylint: disa
 
     # load the new annotations into the boxes list
     for annotations_per_img in annotations:
-        rectangles_as_arrays = [np.clip(dictToList(annotation), 0, 1) for annotation in annotations_per_img]
-        if rectangles_as_arrays:
-            boxes.append(np.stack(rectangles_as_arrays))
-        else:
-            boxes.append(None)
+      rectangles_as_arrays = [np.clip(dictToList(annotation), 0, 1)
+                              for annotation in annotations_per_img]
+      if rectangles_as_arrays:
+        boxes.append(np.stack(rectangles_as_arrays))
+      else:
+        boxes.append(None)
 
     # output the annotations to the errorlog
     with output.redirect_to_element('#errorlog'):
-        display('--boxes array populated--')
+      display('--boxes array populated--')
 
-    output.register_callback(callbackId, callbackFunction)
-    draw_bbox(imgs, callbackId)
+  output.register_callback(callbackId, callbackFunction)
+  draw_bbox(imgs, callbackId)
