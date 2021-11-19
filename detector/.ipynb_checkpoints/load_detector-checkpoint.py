@@ -50,14 +50,12 @@ class Detector:
         for f in tqdm(range(num_frames)):
             ret, frame = cap.read()
             with torch.no_grad():
-                outputs = self.detection_model(frame)
+                outputs = model(frame)
 
-            if outputs["instances"].to("cpu").scores.shape == 0:
+            if len(outputs["instances"].to("cpu")) == 0:
                 detections.append([0, -1, -1, -1, -1])
             else:
-                detections.append(
-                    [1] + outputs["instances"].to("cpu").pred_boxes.tensor.tolist()
-                )
+                detections.append([1] + outputs["instances"].to("cpu").pred_boxes.tensor.tolist())
         return detections
     
     def get_detector(self):
