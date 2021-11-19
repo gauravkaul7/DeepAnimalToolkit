@@ -34,7 +34,7 @@ class Detector:
             model_zoo.get_config_file(pretrained_weights[model_type])
         )
         self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
-        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.9
+        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
         
 
     def load_trained_model(self, weights_path: str):
@@ -46,9 +46,9 @@ class Detector:
         num_frames = int(num_frames)
         cap = cv2.VideoCapture(video_path)
         detections = []
+        
         for f in tqdm(range(num_frames)):
             ret, frame = cap.read()
-
             with torch.no_grad():
                 outputs = self.detection_model(frame)
 
@@ -59,3 +59,6 @@ class Detector:
                     [1] + outputs["instances"].to("cpu").pred_boxes.tensor.tolist()
                 )
         return detections
+    
+    def get_detector(self):
+        return self.detection_model
