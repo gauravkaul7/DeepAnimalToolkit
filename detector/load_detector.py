@@ -34,7 +34,7 @@ class Detector:
             model_zoo.get_config_file(pretrained_weights[model_type])
         )
         self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
-        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7
+        self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
         
 
     def load_trained_model(self, weights_path: str):

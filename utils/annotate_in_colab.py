@@ -29,7 +29,6 @@ def build_dataset(image_paths, training_data, boxes):
         #resize bounding box
         bbox[::2] *= image.shape[0]
         bbox[1::2] *= image.shape[1]
-        
         #create datapoint
         datapoint = copy.deepcopy(datapoint_template)
         datapoint["file_name"] = path 

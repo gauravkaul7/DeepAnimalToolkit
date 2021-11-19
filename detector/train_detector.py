@@ -71,7 +71,7 @@ class DetectorTrainer:
         self.cfg.DATASETS.TEST = ()
         self.cfg.DATALOADER.NUM_WORKERS = 2
         self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.SOLVER.MAX_ITER = 100
+        self.cfg.SOLVER.MAX_ITER = 500
         self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   # faster, and good enough for this toy dataset (default: 512)
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
         self.trainer = DefaultTrainer(self.cfg) 
