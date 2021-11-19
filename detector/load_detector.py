@@ -10,6 +10,8 @@ from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
 from detectron2 import model_zoo
 
+from tqdm import tqdm
+
 pretrained_weights = {
     "mask_50": "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml",
     "mask_101": "COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml",
@@ -40,13 +42,11 @@ class Detector:
         self.detection_model = DefaultPredictor(self.cfg)
         print("loaded model from:", weights_path)
 
-
     def get_detections_video(self,video_path,num_frames):
-
+        num_frames = int(num_frames)
         cap = cv2.VideoCapture(video_path)
         detections = []
-
-        for f in tqdm(range(int(num_frames))):
+        for f in tqdm(range(num_frames)):
             ret, frame = cap.read()
 
             with torch.no_grad():
