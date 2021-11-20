@@ -32,7 +32,7 @@ class Detector:
         self.cfg = get_cfg()
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  
         self.cfg.merge_from_file(model_zoo.get_config_file(pretrained_weights[model_type]))
-        self.cfg.MODEL.WEIGHTS = "/content/drive/MyDrive/keypoint_dataset/pretrained_models/singleMouseTracker.pth"
+        self.cfg.MODEL.WEIGHTS = weights_path
         self.cfg.TEST.DETECTIONS_PER_IMAGE = 1
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
         self.cfg.DATALOADER.NUM_WORKERS = 2
