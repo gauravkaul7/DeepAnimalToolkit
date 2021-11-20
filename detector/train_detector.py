@@ -58,7 +58,7 @@ class DetectorTrainer:
         )
         MetadataCatalog.get("train_dataset").set(thing_classes=["tracking target"])
         self.metadata = MetadataCatalog.get("train_dataset")
-        self.visualize_examples(annotations_path)
+        self.visualize_examples(annotations_folder)
 
     def train_detector(self):
         os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
