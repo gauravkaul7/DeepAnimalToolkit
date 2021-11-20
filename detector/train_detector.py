@@ -1,22 +1,18 @@
-import os
-import json
 import torch, torchvision
-
-import detectron2
-
 import numpy as np
 import os, json, cv2, random
 
+import detectron2
 from detectron2 import model_zoo
-from detectron2.engine import DefaultPredictor
 from detectron2.config import get_cfg
-from detectron2.data import MetadataCatalog, DatasetCatalog
-
 from detectron2.engine import DefaultTrainer
-import detectron2.data.transforms as T
-from detectron2.data import DatasetMapper  # the default mapper
+from detectron2.engine import DefaultPredictor
+from detectron2.data import DatasetMapper 
 from detectron2.data import build_detection_train_loader
+from detectron2.data import MetadataCatalog, DatasetCatalog
+import detectron2.data.transforms as T
 from detectron2.structures import BoxMode
+from detectron2.utils.visualizer import Visualizer
 
 pretrained_weights = {
     "mask_50": "COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml",
@@ -26,7 +22,6 @@ pretrained_weights = {
     "detector_50": "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml",
     "detector_101": "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml",
 }
-
 
 class DetectorTrainer:
     def __init__(self, model_type: str):
@@ -49,12 +44,11 @@ class DetectorTrainer:
             datapoint["file_name"] = datapoint["file_name"]
             for ann in datapoint["annotations"]:
                 ann["bbox_mode"] = BoxMode.XYXY_ABS
-                #ann["segmentation"] = [ann["segmentation"]]
                 ann["category_id"] = 0
-        print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
+        
         print("filterig dataset  ...")
-        #dataset_dicts = [x for x in dataset_dicts if len(x["annotations"][0]["segmentation"][0]) >= 6]
         print("Loaded " + str(len(dataset_dicts)) + " training datapoints")
+        
         return dataset_dicts
 
     def load_dataset(self, annotations_folder: str):
@@ -62,8 +56,9 @@ class DetectorTrainer:
         DatasetCatalog.register(
             "train_dataset", lambda p=annotations_folder: self.get_dataset_dicts(p)
         )
-        MetadataCatalog.get("train_dataset").set(thing_classes=["mouse"])
-        mouse_metadata = MetadataCatalog.get("train_dataset")
+        MetadataCatalog.get("train_dataset").set(thing_classes=["tracking target"])
+        self.metadata = MetadataCatalog.get("train_dataset")
+        self.visualize_examples(annotations_path)
 
     def train_detector(self):
         os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
@@ -77,3 +72,13 @@ class DetectorTrainer:
         self.trainer = DefaultTrainer(self.cfg) 
         self.trainer.resume_or_load(resume=False)
         self.trainer.train()
+        
+    def visualize_examples(self,annotations_path):
+        print('visualizing some examples')
+        dataset_dicts = self.get_dataset_dicts(annotations_path)
+        for d in random.sample(dataset_dicts, len(dataset_dicts)//5):
+            img = cv2.imread(d["file_name"])
+            visualizer = Visualizer(img[:, :, ::-1], metadata=self.metadata, scale=0.5)
+            out = visualizer.draw_dataset_dict(d)
+            cv2_imshow(out.get_image()[:, :, ::-1])
+        

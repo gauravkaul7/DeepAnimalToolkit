@@ -40,20 +40,27 @@ class Detector:
         print("loaded model from:", weights_path)
 
     def get_detections_video(self,video_path,num_frames):
+        
         unfiltered_detections = []
+        
         frame_array = []
+        
         cap = cv2.VideoCapture(video_path)
+        
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        
         #cap.set(2,1889)
+        
         print('total_frames:',total_frames)
-
+        
         for f in tqdm(range(num_frames)):
+            
             ret, frame = cap.read()
             outputs =  self.predictor(frame)
             detections = outputs["instances"].to("cpu").pred_boxes.tensor.numpy() # np.array(detections)
             out_scores = outputs["instances"].to("cpu").scores.numpy() # np.array(out_scores) 
-            print('detections:',detections)
             unfiltered_detections.append([f,detections])
+            
         return unfiltered_detections
 
     def get_detector(self):
