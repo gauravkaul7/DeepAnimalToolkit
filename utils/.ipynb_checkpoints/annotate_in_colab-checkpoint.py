@@ -26,19 +26,19 @@ def build_dataset(image_paths, training_data, boxes):
     os.system("mkdir annotations")
     im_id = 0
     for bbox,image,path in zip(boxes,training_data,image_paths):
-        #resize bounding box
-        bbox[::2] *= image.shape[0]
-        bbox[1::2] *= image.shape[1]
+    
         #create datapoint
         datapoint = copy.deepcopy(datapoint_template)
         datapoint["file_name"] = path 
-        datapoint["height"] = image.shape[0] 
-        datapoint["width"] = image.shape[1] 
+        datapoint["height"] = image.shape[1] 
+        datapoint["width"] = image.shape[2] 
         datapoint["image_id"] = im_id 
+        
         im_id+=1
         
         ann = copy.deepcopy(annotaion_template)
-        ann["bbox"] = [bbox[0][1],bbox[0][0],bbox[0][3],bbox[0][2]]
+        ann["bbox"] = [bbox[0][0]*image.shape[1],bbox[0][1]*image.shape[0],
+                       bbox[0][2]*image.shape[1],bbox[0][3]*image.shape[0]]
     
         datapoint["annotations"].append(ann)
         

@@ -430,8 +430,8 @@ def annotate(imgs: List[Union[str, np.ndarray]],  # pylint: disable=invalid-name
     Returns:
       A list with bbox coordinates in the form [ymin, xmin, ymax, xmax].
     """
-    return (input_bbox['y'], input_bbox['x'], input_bbox['y'] + input_bbox['h'],
-            input_bbox['x'] + input_bbox['w'])
+    return (input_bbox['x'], input_bbox['y'], input_bbox['x'] + input_bbox['w'],
+            input_bbox['y'] + input_bbox['h'])
 
   def callbackFunction(annotations: List[List[Dict[str, float]]]):  # pylint: disable=invalid-name
     """Callback function.
