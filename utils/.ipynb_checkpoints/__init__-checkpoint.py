@@ -5,11 +5,11 @@ from .annotate_in_colab import build_dataset
 
 from .colab_gui import annotate
 from .colab_gui import load_image_into_numpy_array
-
-#from .visualize import visualizer
+from .visualize import visualize_tracking
 
 __all__ = ["setup_DeepAnimalToolkit",
            "sample_frames",
            "build_dataset",
            "annotate",
-           "load_image_into_numpy_array"]
+           "load_image_into_numpy_array",
+           "visualize_tracking"]

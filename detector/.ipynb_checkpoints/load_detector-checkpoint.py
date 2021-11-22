@@ -49,10 +49,9 @@ class Detector:
         
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         
-        #cap.set(2,1889)
-        
-        print('total_frames:',total_frames)
-        
+        if num_frames == -1:
+            num_frames = total_frames-2
+                        
         for f in tqdm(range(num_frames)):
             
             ret, frame = cap.read()
@@ -61,7 +60,17 @@ class Detector:
             out_scores = outputs["instances"].to("cpu").scores.numpy() # np.array(out_scores) 
             unfiltered_detections.append([f,detections])
             
-        return unfiltered_detections
+        object_centerpoints = []
+        
+        for d in detections:
+            if d[1].shape[0] > 0:
+                x = (d[1][0][0]+d[1][0][2])//2
+                y = (d[1][0][1]+d[1][0][3])//2
+                object_centerpoints.append([x,y])
+            else:
+                object_centerpoints.append([0,0])
+            
+        return object_centerpoints
 
     def get_detector(self):
         return self.detection_model
