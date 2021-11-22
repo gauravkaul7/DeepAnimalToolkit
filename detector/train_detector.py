@@ -2,7 +2,7 @@ import torch, torchvision
 import numpy as np
 import os, json, cv2, random
 
-google.colab.patches import cv2_imshow
+from google.colab.patches import cv2_imshow
 
 import detectron2
 from detectron2 import model_zoo
