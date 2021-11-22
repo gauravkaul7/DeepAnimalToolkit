@@ -30,8 +30,8 @@ def build_dataset(image_paths, training_data, boxes):
         #create datapoint
         datapoint = copy.deepcopy(datapoint_template)
         datapoint["file_name"] = path 
-        datapoint["height"] = image.shape[1] 
-        datapoint["width"] = image.shape[2] 
+        datapoint["height"] = image.shape[0] 
+        datapoint["width"] = image.shape[1] 
         datapoint["image_id"] = im_id 
         
         im_id+=1
