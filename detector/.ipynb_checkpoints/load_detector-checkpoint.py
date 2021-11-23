@@ -57,12 +57,11 @@ class Detector:
             ret, frame = cap.read()
             outputs =  self.predictor(frame)
             detections = outputs["instances"].to("cpu").pred_boxes.tensor.numpy() # np.array(detections)
-            out_scores = outputs["instances"].to("cpu").scores.numpy() # np.array(out_scores) 
             unfiltered_detections.append([f,detections])
             
         object_centerpoints = []
         
-        for d in detections:
+        for d in unfiltered_detections:
             if d[1].shape[0] > 0:
                 x = (d[1][0][0]+d[1][0][2])//2
                 y = (d[1][0][1]+d[1][0][3])//2
