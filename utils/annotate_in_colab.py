@@ -27,8 +27,9 @@ def build_dataset(image_paths, training_data, boxes):
     im_id = 0
     
     for bbox,image,path in zip(boxes,training_data,image_paths):
-        print(bbox,image.shape,path)
-    
+        
+        if bbox = None:
+            continue
         #create datapoint
         datapoint = copy.deepcopy(datapoint_template)
         datapoint["file_name"] = path 
@@ -48,7 +49,7 @@ def build_dataset(image_paths, training_data, boxes):
                 json.dump(datapoint, outfile)
 
         
-    print("output annotations folder:")
+    print("output annotations folder:",outfile)
     return 
 
 def setup_gui():
@@ -92,7 +93,7 @@ def sample_frames(video_path,total_num_frames):
         video_number += 1
 
     print("sampling frames randomly")
-    print("output image folder:")
+    print("output image folder:",output_path)
     return 
 
 def sample_frames_feature_spacing(video_paths):
