@@ -25,8 +25,11 @@ def scale_bbox(bboxes,image_paths):
 def build_dataset(image_paths, training_data, boxes):
     os.system("mkdir annotations")
     im_id = 0
-    for bbox,image,path in zip(boxes,training_data,image_paths):
     
+    for bbox,image,path in zip(boxes,training_data,image_paths):
+        
+        print(bbox,image,path)
+        
         #create datapoint
         datapoint = copy.deepcopy(datapoint_template)
         datapoint["file_name"] = path 
