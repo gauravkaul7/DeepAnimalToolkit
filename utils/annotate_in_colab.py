@@ -28,7 +28,7 @@ def build_dataset(image_paths, training_data, boxes):
     
     for bbox,image,path in zip(boxes,training_data,image_paths):
         
-        if bbox == None:
+        if type(bbox) not np.ndarray:
             continue
             
         #create datapoint
