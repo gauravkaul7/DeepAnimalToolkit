@@ -3,6 +3,8 @@ import json
 import cv2
 import random
 import copy
+import numpy as np 
+
 
 datapoint_template = {
     "file_name": "",
@@ -28,7 +30,7 @@ def build_dataset(image_paths, training_data, boxes):
     
     for bbox,image,path in zip(boxes,training_data,image_paths):
         
-        if type(bbox) not np.ndarray:
+        if type(bbox) != np.ndarray:
             continue
             
         #create datapoint
