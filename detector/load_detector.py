@@ -72,4 +72,4 @@ class Detector:
         return object_centerpoints
 
     def get_detector(self):
-        return self.detection_model
+        return self.predictor
