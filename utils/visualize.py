@@ -1,13 +1,13 @@
 import cv2
 from tqdm import tqdm
 
-def visualize_tracking(video_path, trajectory, num_frames=0,scale=1):
+def visualize_tracking(video_path, trajectory, num_frames=-1,scale=1):
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    if num_frames == 0: 
-        num_frames = total_frames-2
-
+    if num_frames == -1:
+        num_frames = len(trajectory)
+             
     print('visualizing', num_frames,'frames') 
 
     frame_id = 0

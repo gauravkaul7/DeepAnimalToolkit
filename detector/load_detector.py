@@ -67,10 +67,10 @@ class Detector:
                 y = (d[1][0][1]+d[1][0][3])//2
                 object_centerpoints.append([x,y])
             else:
-                if len(object_centerpoints) == 0 :
-                    object_centerpoints.append([0,0])
-                else:                    
-                    object_centerpoints.append(object_centerpoints[-1])
+                #if len(object_centerpoints) == 0 :
+                object_centerpoints.append([0,0])
+                #else:                    
+                #    object_centerpoints.append(object_centerpoints[-1])
 
         return object_centerpoints
 
