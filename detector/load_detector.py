@@ -29,6 +29,7 @@ class Detector:
     """
 
     def __init__(self, model_type: str, weights_path: str):
+
         self.cfg = get_cfg()
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1  
         self.cfg.merge_from_file(model_zoo.get_config_file(pretrained_weights[model_type]))
@@ -37,21 +38,21 @@ class Detector:
         self.cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5
         self.cfg.DATALOADER.NUM_WORKERS = 2
         self.predictor = DefaultPredictor(self.cfg)
+
         print("loaded model from:", weights_path)
 
-    def get_detections_video(self,video_path,num_frames):
+    def get_detections_video(self,video_path,num_frames=-1):
         
         unfiltered_detections = []
         
         frame_array = []
         
         cap = cv2.VideoCapture(video_path)
-        
-        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        
+
         if num_frames == -1:
-            num_frames = total_frames-2
-                        
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 2 
+        
+             
         for f in tqdm(range(num_frames)):
             
             ret, frame = cap.read()
@@ -67,8 +68,11 @@ class Detector:
                 y = (d[1][0][1]+d[1][0][3])//2
                 object_centerpoints.append([x,y])
             else:
-                object_centerpoints.append([0,0])
-            
+                if len(object_centerpoints) == 0 :
+                    object_centerpoints.append([0,0])
+                else:                    
+                    object_centerpoints.append(object_centerpoints[-1])
+
         return object_centerpoints
 
     def get_detector(self):

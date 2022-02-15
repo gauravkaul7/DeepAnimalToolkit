@@ -51,8 +51,8 @@ def build_dataset(image_paths, training_data, boxes):
         with open("annotations/" + path.split('/')[1][:-4] + "_annotation.json", "w") as outfile:
                 json.dump(datapoint, outfile)
 
-        
-    print("output annotations folder:",outfile)
+    print("output annotations folder: annotations/")
+    
     return 
 
 def setup_gui():

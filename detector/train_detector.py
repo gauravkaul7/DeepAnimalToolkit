@@ -62,14 +62,14 @@ class DetectorTrainer:
         self.metadata = MetadataCatalog.get("train_dataset")
         self.visualize_examples(annotations_folder)
 
-    def train_detector(self):
+    def train_detector(self,iterations=500):
         os.makedirs(self.cfg.OUTPUT_DIR, exist_ok=True)
         self.cfg.DATASETS.TRAIN = ("train_dataset",)
         self.cfg.DATASETS.TEST = ()
         self.cfg.DATALOADER.NUM_WORKERS = 2
         self.cfg.SOLVER.IMS_PER_BATCH = 8
-        self.cfg.SOLVER.MAX_ITER = 500
-        self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   # faster, and good enough for this toy dataset (default: 512)
+        self.cfg.SOLVER.MAX_ITER = iterations
+        self.cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   
         self.cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1 
         self.trainer = DefaultTrainer(self.cfg) 
         self.trainer.resume_or_load(resume=False)

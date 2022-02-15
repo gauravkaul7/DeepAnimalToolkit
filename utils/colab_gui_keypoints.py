@@ -210,6 +210,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   }
 
                 // init template for annotations
+
                 const annotation = {
                       x: 0,
                       y: 0,
@@ -270,6 +271,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                         else{
                           box.x = o.x + o.w;
                         }
+                        
                         if (o.h > 0){
                           box.y = o.y;
                         }

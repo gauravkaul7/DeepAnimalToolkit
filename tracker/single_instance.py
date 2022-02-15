@@ -2,6 +2,8 @@ from filterpy.kalman import UnscentedKalmanFilter
 from filterpy.kalman.sigma_points import MerweScaledSigmaPoints
 import filterpy
 import numpy as np
+import csv
+
 
 print('imported single instance tracker $$$')
 class SingleInstanceTracker:
@@ -36,8 +38,14 @@ class SingleInstanceTracker:
         for z in trajectory:
             self.kf.predict()
             self.kf.update(z)
-            # print(hx(kf.x), 'log-likelihood', kf.log_likelihood)
-            trajectory_filtered.append(self.hx(self.kf.x))
+            
+        trajectory_filtered = [[i,[0],x[1]] for i,x in enumerate(trajectory_filtered)]
+        trajectory_filtered = [['frame id','x','y']] + trajectory_filtered
+
+        with open('trajectory_output.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerows(trajectory_filtered)
+
         return trajectory_filtered
 
     def fx(self, x, dt):
