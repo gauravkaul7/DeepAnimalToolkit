@@ -50,8 +50,7 @@ class Detector:
         cap = cv2.VideoCapture(video_path)
 
         if num_frames == -1:
-            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 2 
-        
+            num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 2 
              
         for f in tqdm(range(num_frames)):
             

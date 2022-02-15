@@ -38,8 +38,9 @@ class SingleInstanceTracker:
         for z in trajectory:
             self.kf.predict()
             self.kf.update(z)
-            
-        trajectory_filtered = [[i,[0],x[1]] for i,x in enumerate(trajectory_filtered)]
+            trajectory_filtered.append(self.hx(self.kf.x))
+
+        trajectory_filtered = [[i,x[0],x[1]] for i,x in enumerate(trajectory_filtered)]
         trajectory_filtered = [['frame id','x','y']] + trajectory_filtered
 
         with open('trajectory_output.csv', 'w', newline='') as f:
