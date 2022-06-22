@@ -1,9 +1,9 @@
-import os 
-import json 
+import os
+import json
 import cv2
 import random
 import copy
-import numpy as np 
+import numpy as np
 
 
 datapoint_template = {
@@ -13,59 +13,64 @@ datapoint_template = {
     "image_id": 0,
     "annotations": [],
 }
-annotaion_template = {
-    "bbox": [],
-    "bbox_mode": "BoxMode.XYXY_ABS",
-    "category_id": 0
-}
+annotaion_template = {"bbox": [], "bbox_mode": "BoxMode.XYXY_ABS", "category_id": 0}
 
 
-def scale_bbox(bboxes,image_paths):
+def scale_bbox(bboxes, image_paths):
     scaled_bboxes = bboxes
     return scaled_bboxes
+
 
 def build_dataset(image_paths, training_data, boxes):
     os.system("mkdir annotations")
     im_id = 0
-    
-    for bbox,image,path in zip(boxes,training_data,image_paths):
-        
+
+    for bbox, image, path in zip(boxes, training_data, image_paths):
+
         if type(bbox) != np.ndarray:
             continue
-            
-        #create datapoint
+
+        # create datapoint
         datapoint = copy.deepcopy(datapoint_template)
-        datapoint["file_name"] = path 
-        datapoint["height"] = image.shape[0] 
-        datapoint["width"] = image.shape[1] 
-        datapoint["image_id"] = im_id 
-        
-        im_id+=1
-        
+        datapoint["file_name"] = path
+        datapoint["height"] = image.shape[0]
+        datapoint["width"] = image.shape[1]
+        datapoint["image_id"] = im_id
+
+        im_id += 1
+
         ann = copy.deepcopy(annotaion_template)
-        ann["bbox"] = [bbox[0][0]*image.shape[1],bbox[0][1]*image.shape[0],
-                       bbox[0][2]*image.shape[1],bbox[0][3]*image.shape[0]]
-    
+        ann["bbox"] = [
+            bbox[0][0] * image.shape[1],
+            bbox[0][1] * image.shape[0],
+            bbox[0][2] * image.shape[1],
+            bbox[0][3] * image.shape[0],
+        ]
+
         datapoint["annotations"].append(ann)
-        
-        with open("annotations/" + path.split('/')[1][:-4] + "_annotation.json", "w") as outfile:
-                json.dump(datapoint, outfile)
+
+        with open(
+            "annotations/" + path.split("/")[1][:-4] + "_annotation.json", "w"
+        ) as outfile:
+            json.dump(datapoint, outfile)
 
     print("output annotations folder: annotations/")
-    
-    return 
+
+    return
+
 
 def setup_gui():
-    
-    os.system("pip install git+git://github.com/ricardodeazambuja/colab_utils.gits")
-    
-    print("big shoutout to ricardodeazambuja for making such a wonderful tool!")
-    
-    print("in colab GUI setup!")
-    
-    return 
 
-def sample_frames(video_path,total_num_frames,output_path,vid_id=8888):
+    os.system("pip install git+git://github.com/ricardodeazambuja/colab_utils.gits")
+
+    print("big shoutout to ricardodeazambuja for making such a wonderful tool!")
+
+    print("in colab GUI setup!")
+
+    return
+
+
+def sample_frames(video_path, total_num_frames, output_path, vid_id=8888):
 
     if not os.path.isdir(output_path):
         os.makedirs(output_path)
@@ -78,19 +83,14 @@ def sample_frames(video_path,total_num_frames,output_path,vid_id=8888):
         cap.set(1, frame_no)
         __, frame = cap.read()
         cv2.imwrite(
-            output_path
-            + "video_"
-            + str(vid_id)
-            + "_frame_"
-            + str(frame_no)
-            + ".jpg",
+            os.path.join(
+                output_path, "video_" + str(vid_id) + "_frame_" + str(frame_no) + ".jpg"
+            ),
             frame,
         )
     cap.release()
 
     print("sampling frames randomly")
-    print("output image folder:",output_path)
-    
-    return 
+    print("output image folder:", output_path)
 
-
+    return
