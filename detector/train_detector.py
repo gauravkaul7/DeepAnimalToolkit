@@ -26,15 +26,23 @@ pretrained_weights = {
 }
 
 class DetectorTrainer:
-    def __init__(self, model_type: str):
+    def __init__(self, model_type: str, model_path=None):
         self.cfg = get_cfg()
         self.cfg.merge_from_file(
             model_zoo.get_config_file(pretrained_weights[model_type])
         )
-        self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
-            pretrained_weights[model_type]
-        )
-        print("starting model weights coming from:", pretrained_weights[model_type])
+
+        if(model_path):
+            self.cfg.MODEL.WEIGHTS = model_path
+            print("starting model weights coming from:", model_path)
+
+        else:
+            self.cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
+                pretrained_weights[model_type]
+            )
+            print("starting model weights coming from:", pretrained_weights[model_type])
+
+
 
     def get_dataset_dicts(self, annotations_path: str):
         dataset_dicts = [
