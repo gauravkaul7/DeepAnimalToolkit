@@ -46,7 +46,7 @@ class DetectorTrainer:
 
     def get_dataset_dicts(self, annotations_path: str):
         dataset_dicts = [
-            json.load(open(annotations_path + x))
+            json.load(open(os.path.join(annotations_path,x)))
             for x in os.listdir(annotations_path)
             if x[-5:] == ".json"
         ]
