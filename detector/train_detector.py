@@ -32,7 +32,7 @@ class DetectorTrainer:
             model_zoo.get_config_file(pretrained_weights[model_type])
         )
 
-        if(model_path):
+        if(os.path.isfile(model_path)):
             self.cfg.MODEL.WEIGHTS = model_path
             print("starting model weights coming from:", model_path)
 
