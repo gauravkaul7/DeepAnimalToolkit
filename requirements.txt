@@ -1,2 +1,12 @@
 numpy>=1.17
+pyyaml==5.1
 filterpy
+opencv-python
+argparse
+# Torch
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.8.0+cu101
+torchvision==0.9.0+cu101
+# Detectron
+--find-links https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/index.html
+detectron2
