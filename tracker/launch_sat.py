@@ -48,7 +48,7 @@ export PATH={fill in your path to conda bin folder}:$PATH
 
 cd {fill in your path to this directory path/ending/in/DAT}
 
-python tracking/single_instance.py -v hpc/videos_to_track/{video} -o hpc/output/{output} -t {model_type} -m {model}
+python track_single_instance.py -v ' + {video} + ' -o ' + {output} + ' -m ' + {model} + ' -t ' + {model_type}
 
 """
     
