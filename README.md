@@ -10,7 +10,7 @@ Then, Clone the repository, create a conda environment and install all dependenc
 
 ```bash
 
-git clone https://github.com/gauravkaul7/DAT
+git clone https://github.com/gauravkaul7/DeepAnimalToolkit.git
 conda create -n DAT python=3.9
 conda activate DAT
 python -m pip install -r requirements.txt
