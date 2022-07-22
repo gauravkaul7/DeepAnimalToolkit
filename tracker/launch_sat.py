@@ -24,13 +24,17 @@ parser.add_argument(
 parser.add_argument(
 "-v", "--videos", help="path to videos folder", required=True
 )
+parser.add_argument(
+"-o", "--output_root", help="path to output folder", required=True
+)
 args = vars(parser.parse_args())
 
-videos = [x for x in os.listdir(args['videos']) if x[-4:] == ".avi"]
+videos = [os.path.join(args['videos'],x) for x in os.listdir(args['videos']) if x[-4:] == ".avi"]
 
 for video in videos:
-    output = video.split('.')[0]+'_tracking'
-    
+    output = video.split('.')[0].split('/')[-1] +'_tracking'
+    output = os.path.join(args['output_root'],output)
+
     SBATCH_STRING = """#!/bin/sh
     
 #SBATCH --account={account}
@@ -42,13 +46,11 @@ for video in videos:
 #SBATCH --time=48:00:00
 #SBATCH --mem=40GB
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:{fill in your path to conda lib folder}
+export PATH=/home/UNIQUENAME/miniconda3/envs/DAT/bin:$PATH
 
-export PATH={fill in your path to conda bin folder}:$PATH
+cd /path/to/DeepAnimalToolkit
 
-cd {fill in your path to this directory path/ending/in/DAT}
-
-python track_single_instance.py -v ' + {video} + ' -o ' + {output} + ' -m ' + {model} + ' -t ' + {model_type}
+python tracker/track_single_instance.py -v {video} -o {output} -m {model} -t {model_type}
 
 """
     
@@ -64,7 +66,7 @@ python track_single_instance.py -v ' + {video} + ' -o ' + {output} + ' -m ' + {m
     )
     
     dirpath = tempfile.mkdtemp()
-
+    print(SBATCH_STRING)
     with open(os.path.join(dirpath, "scr.sh"), "w") as tmpfile:
         tmpfile.write(SBATCH_STRING)
     os.system(f"sbatch {os.path.join(dirpath, 'scr.sh')}")
